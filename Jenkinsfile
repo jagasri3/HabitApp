@@ -1,9 +1,18 @@
 pipeline {
     agent any
 
-    stages {
+    options {
+        skipDefaultCheckout(true)
+    }
 
-        
+    stages {
+        stage('Checkout') {
+            steps {
+                deleteDir()
+                checkout scm
+            }
+        }
+
         stage('Maven Build') {
             steps {
                 sh 'mvn clean package -DskipTests'
@@ -17,12 +26,12 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
-    steps {
-        withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
-            sh 'mvn sonar:sonar -Dsonar.login="$SONAR_TOKEN" -Dsonar.host.url=http://sonarqube:9000'
+            steps {
+                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                    sh 'mvn sonar:sonar -Dsonar.login="$SONAR_TOKEN" -Dsonar.host.url=http://sonarqube:9000'
+                }
+            }
         }
-    }
-}
 
         stage('Docker Build') {
             steps {
