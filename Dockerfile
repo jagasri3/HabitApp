@@ -15,7 +15,7 @@ FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
 # Create a non-root user
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+RUN addgroup -S appgroup -g 1000 && adduser -S appuser -u 1000 -G appgroup
 
 COPY --from=builder /app/target/*.jar app.jar
 
